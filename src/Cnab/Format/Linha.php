@@ -11,6 +11,8 @@ class Linha
     {
         if (\array_key_exists($key, $this->fields)) {
             $this->fields[$key]->set($valor);
+        } else {
+            throw new \InvalidArgumentException("field '$key' dont exists");
         }
     }
 
