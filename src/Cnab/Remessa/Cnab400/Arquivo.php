@@ -74,24 +74,26 @@ class Arquivo implements \Cnab\Remessa\IArquivo
 
         $this->header->codigo_banco = $this->banco['codigo_do_banco'];
         $this->header->nome_banco = $this->banco['nome_do_banco'];
-        $this->header->agencia = $this->configuracao['agencia'];
         $this->header->conta = $this->configuracao['conta'];
 
         switch ($this->codigo_banco) {
             case \Cnab\Banco::CEF:
                 $this->header->codigo_cedente = $this->configuracao['codigo_cedente'];
+                $this->header->agencia = $this->configuracao['agencia'];
             case \Cnab\Banco::BRADESCO:
                 $this->header->codigo_cedente = $this->configuracao['codigo_cedente'];
                 $this->header->sequencial_remessa = $this->configuracao['sequencial_remessa'];
                 $this->header->razao_social = $this->configuracao['razao_social'];
                 break;
             case \Cnab\Banco::BANCO_DO_BRASIL:
+                $this->header->agencia = $this->configuracao['agencia'];
                 $this->header->agencia_dv = $this->configuracao['agencia_dac'];
                 $this->header->conta_dv = $this->configuracao['conta_dac'];
                 $this->header->numero_sequencial = $this->configuracao['numero_sequencial'];
-                $this->header->convenio_lider = $this->configuracao['numero_convenio'];                
+                $this->header->convenio_lider = $this->configuracao['numero_convenio'];
                 break;                    
             default:
+                $this->header->agencia = $this->configuracao['agencia'];
                 $this->header->conta_dv = $this->configuracao['conta_dac'];
                 break;
         }
