@@ -38,6 +38,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             case \Cnab\Banco::BRADESCO:
                 $campos[] = 'codigo_cedente';
                 $campos[] = 'sequencial_remessa';
+                $campos[] = 'conta_dac';
                 break;
             case \Cnab\Banco::BANCO_DO_BRASIL:
                 $campos[] = 'agencia_dac';
@@ -74,12 +75,13 @@ class Arquivo implements \Cnab\Remessa\IArquivo
 
         $this->header->codigo_banco = $this->banco['codigo_do_banco'];
         $this->header->nome_banco = $this->banco['nome_do_banco'];
-        $this->header->conta = $this->configuracao['conta'];
 
         switch ($this->codigo_banco) {
             case \Cnab\Banco::CEF:
                 $this->header->codigo_cedente = $this->configuracao['codigo_cedente'];
                 $this->header->agencia = $this->configuracao['agencia'];
+                $this->header->conta = $this->configuracao['conta'];
+                $this->header->nome_empresa = $this->configuracao['nome_fantasia'];
             case \Cnab\Banco::BRADESCO:
                 $this->header->codigo_cedente = $this->configuracao['codigo_cedente'];
                 $this->header->sequencial_remessa = $this->configuracao['sequencial_remessa'];
@@ -91,14 +93,17 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                 $this->header->conta_dv = $this->configuracao['conta_dac'];
                 $this->header->numero_sequencial = $this->configuracao['numero_sequencial'];
                 $this->header->convenio_lider = $this->configuracao['numero_convenio'];
+                $this->header->conta = $this->configuracao['conta'];
+                $this->header->nome_empresa = $this->configuracao['nome_fantasia'];
                 break;                    
             default:
                 $this->header->agencia = $this->configuracao['agencia'];
+                $this->header->conta = $this->configuracao['conta'];
                 $this->header->conta_dv = $this->configuracao['conta_dac'];
+                $this->header->nome_empresa = $this->configuracao['nome_fantasia'];
                 break;
         }
 
-        $this->header->nome_empresa = $this->configuracao['nome_fantasia'];
         $this->header->data_geracao = $this->configuracao['data_geracao']->format('dmy');
     }
 
@@ -112,19 +117,23 @@ class Arquivo implements \Cnab\Remessa\IArquivo
 
         if ($tipo == 'remessa') {
             $detalhe->codigo_ocorrencia = !empty($boleto['codigo_de_ocorrencia']) ? $boleto['codigo_de_ocorrencia'] : '1';
-
-            $detalhe->codigo_inscricao = 2;
-            $detalhe->numero_inscricao = $this->prepareText($this->configuracao['cnpj'], '.-/');
-
             if (\Cnab\Banco::BRADESCO == $this->codigo_banco) {
-                $detalhe->codigo_cedente = $this->header->codigo_cedente;
                 $detalhe->digito_nosso_numero = $boleto['digito_nosso_numero'];
+                $detalhe->agencia = $this->configuracao['agencia'];
+                $detalhe->conta = $this->configuracao['conta'];
+                $detalhe->conta_dv = $this->configuracao['conta_dac'];
             } else if (\Cnab\Banco::CEF == $this->codigo_banco) {
                 $detalhe->codigo_cedente = $this->header->codigo_cedente;
                 $detalhe->taxa_de_permanencia = $boleto['taxa_de_permanencia'];
                 $detalhe->mensagem = $boleto['mensagem'];
                 $detalhe->data_multa = $boleto['data_multa'];
                 $detalhe->valor_multa = $boleto['valor_multa'];
+                $detalhe->codigo_inscricao = 2;
+                $detalhe->numero_inscricao = $this->prepareText($this->configuracao['cnpj'], '.-/');
+                $detalhe->bairro = $this->prepareText($boleto['sacado_bairro']);
+                $detalhe->cidade = $this->prepareText($boleto['sacado_cidade']);
+                $detalhe->estado = $boleto['sacado_uf'];
+                $detalhe->prazo = $boleto['prazo'];
             } else if (\Cnab\Banco::BANCO_DO_BRASIL == $this->codigo_banco) {
                 $detalhe->agencia = $this->header->agencia;
                 $detalhe->agencia_dv = $this->header->agencia_dv;
@@ -133,7 +142,12 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                 $detalhe->numero_convenio = $boleto['numero_convenio'];
                 $detalhe->variacao_carteira = $boleto['variacao_carteira'];
                 $detalhe->tipo_cobranca = (isset($boleto['tipo_cobranca']) ?: '');
-
+                $detalhe->codigo_inscricao = 2;
+                $detalhe->numero_inscricao = $this->prepareText($this->configuracao['cnpj'], '.-/');
+                $detalhe->bairro = $this->prepareText($boleto['sacado_bairro']);
+                $detalhe->cidade = $this->prepareText($boleto['sacado_cidade']);
+                $detalhe->estado = $boleto['sacado_uf'];
+                $detalhe->prazo = $boleto['prazo'];
             } else {
                 $detalhe->agencia = $this->header->agencia;
                 $detalhe->conta = $this->header->conta;
@@ -143,6 +157,12 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                 $detalhe->codigo_carteira = 'I';
                 $detalhe->uso_banco = '';
                 $detalhe->data_mora = $boleto['data_multa'];
+                $detalhe->codigo_inscricao = 2;
+                $detalhe->numero_inscricao = $this->prepareText($this->configuracao['cnpj'], '.-/');
+                $detalhe->bairro = $this->prepareText($boleto['sacado_bairro']);
+                $detalhe->cidade = $this->prepareText($boleto['sacado_cidade']);
+                $detalhe->estado = $boleto['sacado_uf'];
+                $detalhe->prazo = $boleto['prazo'];
 
                 if ($boleto['valor_multa'] > 0) {
                     /*
@@ -171,7 +191,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                                   ? $boleto['uso_empresa'] 
                                   : $boleto['nosso_numero'];
             $detalhe->nosso_numero = $boleto['nosso_numero'];
-
             $detalhe->numero_carteira = $boleto['carteira'];
             $detalhe->numero_documento = $boleto['numero_documento'];
             $detalhe->vencimento = $dateVencimento->format('dmy');
@@ -201,16 +220,12 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             }
             
             $detalhe->logradouro = $this->prepareText($boleto['sacado_logradouro']);
-            $detalhe->bairro = $this->prepareText($boleto['sacado_bairro']);
             $detalhe->cep = str_replace('-', '', $boleto['sacado_cep']);
-            $detalhe->cidade = $this->prepareText($boleto['sacado_cidade']);
-            $detalhe->estado = $boleto['sacado_uf'];
             $detalhe->sacador = $this->prepareText($this->configuracao['nome_fantasia']);
 
             $detalhe->juros_um_dia = $boleto['juros_de_um_dia'];
             $detalhe->desconto_ate = $boleto['data_desconto'];
             $detalhe->valor_desconto = $boleto['valor_desconto'];
-            $detalhe->prazo = $boleto['prazo'];
         } elseif ($tipo == 'baixa') {
             $detalhe->codigo_inscricao = '0';
             $detalhe->numero_inscricao = '0';
