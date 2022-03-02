@@ -116,8 +116,8 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $nossoNumero = str_pad($carteira, 2, 0, STR_PAD_LEFT) .
                 str_pad($numeroDocumento, 11, 0, STR_PAD_LEFT);
 
-            foreach ($nossoNumero as $index => $digito) {
-                $soma += (int)$digito * $pesos[$index];
+            foreach ((array)$nossoNumero as $index => $digito) {
+                $soma += (int)$digito * (int)$pesos[$index];
             }
 
             $resto = $soma % 11;
