@@ -107,6 +107,31 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $this->header->data_geracao = $this->configuracao['data_geracao']->format('dmy');
     }
 
+    public function getDigitoNossoNumero($carteira, $numeroDocumento)
+    {
+        if (\Cnab\Banco::BRADESCO == $this->codigo_banco) {
+            $soma = 0;
+            $pesos = '2765432765432';
+
+            $nossoNumero = str_pad($carteira, 2, 0, STR_PAD_LEFT) .
+                str_pad($numeroDocumento, 11, 0, STR_PAD_LEFT);
+
+            foreach ((array)$nossoNumero as $index => $digito) {
+                $soma += (int)$digito * (int)$pesos[$index];
+            }
+
+            $resto = $soma % 11;
+
+            if ($resto == 1) {
+                return 'P';
+            }
+
+            return 11 - $resto;
+        }
+
+        return '';
+    }
+
     public function insertDetalhe(array $boleto, $tipo = 'remessa')
     {
         $dateVencimento = $boleto['data_vencimento'] instanceof \DateTime ? $boleto['data_vencimento'] : new \DateTime($boleto['data_vencimento']);
@@ -118,7 +143,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         if ($tipo == 'remessa') {
             $detalhe->codigo_ocorrencia = !empty($boleto['codigo_de_ocorrencia']) ? $boleto['codigo_de_ocorrencia'] : '1';
             if (\Cnab\Banco::BRADESCO == $this->codigo_banco) {
-                $detalhe->digito_nosso_numero = $boleto['digito_nosso_numero'];
+                $detalhe->digito_nosso_numero = $this->getDigitoNossoNumero($boleto['carteira'], $boleto['numero_documento']);
                 $detalhe->agencia = $this->configuracao['agencia'];
                 $detalhe->conta = $this->configuracao['conta'];
                 $detalhe->conta_dv = $this->configuracao['conta_dac'];
