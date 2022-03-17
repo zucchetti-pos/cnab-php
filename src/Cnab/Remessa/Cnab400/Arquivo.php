@@ -159,6 +159,9 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                 $detalhe->cidade = $this->prepareText($boleto['sacado_cidade']);
                 $detalhe->estado = $boleto['sacado_uf'];
                 $detalhe->prazo = $boleto['prazo'];
+                $detalhe->instrucao1 = $boleto['instrucao1'];
+                $detalhe->instrucao2 = $boleto['instrucao2'];
+                $detalhe->codigo_banco = $this->banco['codigo_do_banco'];   
             } else if (\Cnab\Banco::BANCO_DO_BRASIL == $this->codigo_banco) {
                 $detalhe->agencia = $this->header->agencia;
                 $detalhe->agencia_dv = $this->header->agencia_dv;
@@ -173,6 +176,9 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                 $detalhe->cidade = $this->prepareText($boleto['sacado_cidade']);
                 $detalhe->estado = $boleto['sacado_uf'];
                 $detalhe->prazo = $boleto['prazo'];
+                $detalhe->instrucao1 = $boleto['instrucao1'];
+                $detalhe->instrucao2 = $boleto['instrucao2'];
+                $detalhe->codigo_banco = $this->banco['codigo_do_banco'];
             } else {
                 $detalhe->agencia = $this->header->agencia;
                 $detalhe->conta = $this->header->conta;
@@ -188,6 +194,9 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                 $detalhe->cidade = $this->prepareText($boleto['sacado_cidade']);
                 $detalhe->estado = $boleto['sacado_uf'];
                 $detalhe->prazo = $boleto['prazo'];
+                $detalhe->instrucao1 = $boleto['instrucao1'];
+                $detalhe->instrucao2 = $boleto['instrucao2'];
+                $detalhe->codigo_banco = $this->banco['codigo_do_banco'];
 
                 if ($boleto['valor_multa'] > 0) {
                     /*
@@ -221,8 +230,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $detalhe->vencimento = $dateVencimento->format('dmy');
             $detalhe->valor_titulo = $boleto['valor'];
             $detalhe->aceite = empty($boleto['aceite']) ? 'N' : $boleto['aceite'];
-            $detalhe->instrucao1 = $boleto['instrucao1'];
-            $detalhe->instrucao2 = $boleto['instrucao2'];
             $detalhe->especie = $boleto['especie'];
             $detalhe->data_emissao = $dateCadastro->format('dmy');
 
@@ -291,8 +298,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         } else {
             throw new Exception('Tipo de $detalhe desconhecido');
         }
-
-        $detalhe->codigo_banco = $this->banco['codigo_do_banco'];
 
         $this->detalhes[] = $detalhe;
 
