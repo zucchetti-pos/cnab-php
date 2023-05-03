@@ -193,6 +193,10 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
             $nossoNumero = substr($nossoNumero, 0, -1);
         }
 
+        if ($this->codigo_banco === \Cnab\Banco::SICOOB) {
+            $nossoNumero = substr($nossoNumero, 0, -5);
+        }
+
         return $nossoNumero;
     }
 
