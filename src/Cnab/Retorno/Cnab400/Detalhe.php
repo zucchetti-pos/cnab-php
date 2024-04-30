@@ -556,7 +556,7 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
      */
     public function getDescricaoLiquidacao()
     {
-        // @TODO: Usar YAML (cnab_yaml) para criar tabela de descrição
+        // @TODO: Usar YAML (cnab-yaml) para criar tabela de descrição
         $codigoLiquidacao = $this->getCodigoLiquidacao();
         $tabela = array();
 

@@ -9,15 +9,15 @@ class Factory
     public static function getCnabFormatPath()
     {
         if (self::$cnabFormatPath === null) {
-            $optionA = dirname(__FILE__).'/../../../cnab_yaml';
-            $optionB = getcwd().'/vendor/compufour/cnab_yaml';
+            $optionA = dirname(__FILE__) . '/../../../cnab-yaml';
+            $optionB = getcwd() . '/vendor/zucchetti-pos/cnab-yaml';
 
             if (file_exists($optionA)) {
                 self::setCnabFormatPath($optionA);
             } elseif (file_exists($optionB)) {
                 self::setCnabFormatPath($optionB);
             } else {
-                throw new \Exception('cnab_yaml não está instalado ou não foi configurado');
+                throw new \Exception('cnab-yaml não está instalado ou não foi configurado');
             }
         }
 
