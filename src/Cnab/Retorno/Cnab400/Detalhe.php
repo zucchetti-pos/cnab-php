@@ -200,7 +200,7 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
         if (\Cnab\Banco::CEF == $this->_codigo_banco) {
             return $this->valor_juros + $this->valor_multa;
         } else {
-            return $this->valor_mora_multa;
+            return isset($this->valor_mora_multa) ? $this->valor_mora_multa : 0;
         }
     }
 
