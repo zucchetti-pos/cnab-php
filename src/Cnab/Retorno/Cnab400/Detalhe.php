@@ -199,9 +199,20 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
     {
         if (\Cnab\Banco::CEF == $this->_codigo_banco) {
             return $this->valor_juros + $this->valor_multa;
-        } else {
-            return isset($this->valor_mora_multa) ? $this->valor_mora_multa : 0;
+        }       
+
+        if ($this->existField('valor_mora_multa')) {
+            return $this->valor_mora_multa;
         }
+ 
+        if ($this->existField('valor_juros')) {
+            if ($this->existField('valor_outros_creditos')) {
+                return $this->valor_juros + $this->valor_outros_creditos;
+            }
+            return $this->valor_juros;
+        }
+ 
+        return 0;
     }
 
     /**
