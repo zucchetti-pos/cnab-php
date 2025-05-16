@@ -214,8 +214,6 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
  
         return 0;
     }
- 
-    }
 
     /**
      * Retorna a data da ocorrencia, o dia do pagamento.
