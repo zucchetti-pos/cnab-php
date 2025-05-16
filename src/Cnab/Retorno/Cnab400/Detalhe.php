@@ -197,14 +197,24 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
      */
     public function getValorMoraMulta()
     {
-         if(\Cnab\Banco::BANCO_DO_BRASIL == $this->_codigo_banco){
-            return $this->valor_juros;
-        }
         if (\Cnab\Banco::CEF == $this->_codigo_banco) {
             return $this->valor_juros + $this->valor_multa;
-        } else {
+        }       
+
+        if ($this->existField('valor_mora_multa')) {
             return $this->valor_mora_multa;
         }
+ 
+        if ($this->existField('valor_juros')) {
+            if ($this->existField('valor_outros_creditos')) {
+                return $this->valor_juros + $this->valor_outros_creditos;
+            }
+            return $this->valor_juros;
+        }
+ 
+        return 0;
+    }
+ 
     }
 
     /**
