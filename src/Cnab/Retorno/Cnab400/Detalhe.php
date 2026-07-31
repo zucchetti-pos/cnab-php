@@ -152,13 +152,23 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
         return trim($this->numero_do_documento);
     }
 
-    /** 
-     * Retorna o nosso número do boleto (sem o digito).
-     *
+    /**
+     * Retorna o nosso número do boleto (sem o dígito verificador). 
+     * Exceto Itaú que é salvo no banco com carteira e digito verificador.
+     * 
      * @return string
      */
     public function getNossoNumero()
     {
+        if (\Cnab\Banco::ITAU == $this->_codigo_banco
+            && $this->existField('carteira')
+            && $this->existField('dac_nosso_numero')
+        ) {
+            return str_pad($this->carteira, 3, '0', STR_PAD_LEFT)
+                . str_pad($this->nosso_numero, 8, '0', STR_PAD_LEFT)
+                . $this->dac_nosso_numero;
+        }
+
         return $this->nosso_numero;
     }
 

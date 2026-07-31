@@ -20,7 +20,7 @@ class ArquivoTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(new \DateTime('2012-04-12 00:00:00'), $detalhe->getDataVencimento());
         $this->assertEquals(5.0, $detalhe->getValorRecebido());
-        $this->assertEquals(97, $detalhe->getNossoNumero());
+        $this->assertEquals(9, $detalhe->getNossoNumero());
         $this->assertEquals(15, $detalhe->getNumeroDocumento());
         $this->assertEquals(new \DateTime('2012-04-11 00:00:00'), $detalhe->getDataOcorrencia());
     }
@@ -80,7 +80,7 @@ class ArquivoTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1A', $detalhe->getNumeroDocumento());
         $this->assertEquals(109, $detalhe->getCarteira());
         $this->assertEquals('0177', $detalhe->getAgencia());
-        $this->assertEquals(231327, $detalhe->getNossoNumero());
+        $this->assertEquals('109002313270', $detalhe->getNossoNumero());
         $this->assertEquals(null, $detalhe->getDataVencimento());
         $this->assertEquals(new \DateTime('2013-06-21 00:00:00'), $detalhe->getDataCredito());
         $this->assertEquals(new \DateTime('2013-06-20 00:00:00'), $detalhe->getDataOcorrencia());
